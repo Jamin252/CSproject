@@ -484,7 +484,7 @@ class TrapGroup():
                             trap = DisappearBlock((dePos[0]+ BLOCKSIZE[0] * i, dePos[1]+ BLOCKSIZE[1] * j))
                             self.all_trap_group.append(trap)
                 elif row[0] == "grow_spike":
-                    trap = GrowSpike(dePos, int(row[3]), int(row[4]),apply(row[5:9], "int"), int(row[11]))
+                    trap = GrowSpike(dePos, int(row[3]), int(row[4]),apply(row[5:9], "int"), int(row[11]), int(row[12]))
                     self.all_trap_group.append(trap)
                 elif row[0] == "hori_spike":
                     trap = HorizontalSpike(dePos, int(row[3]), int(row[4]))

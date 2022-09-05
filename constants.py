@@ -1,8 +1,8 @@
 import re
 
 # Color
-BROWN = (135, 52, 35)
-SKYBLUE = (91, 148, 251)
+BROWN = (135, 52, 35) #873423
+SKYBLUE = (91, 148, 251) #5B94FB
 LIGHTGREY = (213, 216, 220)
 BLACK = (0, 0, 0)
 YELLOW = (251,208,0)

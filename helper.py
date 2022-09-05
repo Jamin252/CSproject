@@ -383,10 +383,11 @@ class DisappearBlock(ActivateObjects, Ground):
 
 class GrowSpike(Spike, ActivateObjects):
 
-    def __init__(self, position, base, height, zone, up):
+    def __init__(self, position, base, height, zone, up, hori):
         Spike.__init__(self, position, base, height)
         ActivateObjects.__init__(self,zone)
         self.tar_height = height*up
+        self.tar_base = hori * base
 
     def player_interaction(self, player_rect):
         if not self.activate:
@@ -396,9 +397,16 @@ class GrowSpike(Spike, ActivateObjects):
         return False
     
     def logic(self):
+        flag = False
         if self.activate and self.height < self.tar_height:
             self.height += GROW_SPEED
             self.y -= GROW_SPEED
+            flag = True
+        if self.activate and self.base < self.tar_base:
+            self.base += GROW_SPEED
+            self.x -= GROW_SPEED /2
+            flag = True
+        if flag:
             self.rect_group = []
             base_change = self.base / 40
             height_change = self.height / 20
@@ -413,6 +421,7 @@ class GrowSpike(Spike, ActivateObjects):
                 top -= height_change
     
     def draw(self,screen, cam_position):
+        #pygame.draw.rect(screen, YELLOW, pygame.Rect(self.zone.left - cam_position.x, self.zone.top-cam_position.y, self.zone.width, self.zone.height))
         super().draw(screen, cam_position)
 
 class Check_point(Tile, ActivateObjects):
@@ -474,3 +483,4 @@ class MoveableHoriSpike(HorizontalSpike, SpikeUp):
     
     def logic(self):
         SpikeUp.logic(self)
+
