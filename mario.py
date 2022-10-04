@@ -1,6 +1,5 @@
 import pygame, math, sys, csv
 from pygame import math
-from sqlalchemy import false
 from constants import *
 from camera import *
 from helper import *
@@ -20,6 +19,7 @@ class Game:
         self.done = False
         self.mouseBuffer = MouseBuffer()
         self.instruction_screen = InstructionScreen(RETURNTOGAME)
+        self.game_board = GameBoard()
         self.currentScreen = GAME
         self.restart = False
         self.death_text = DeathText()
@@ -42,7 +42,7 @@ class Game:
 
         self.parseEntities("entity"+str(level)+".csv")
         self.trap_group = TrapGroup("trap"+str(level)+".csv")
-        self.gameSpriteGroup.append(self.trap_group)
+        self.gameSpriteGroup.extend([self.trap_group, self.game_board])
 
     def parseEntities(self, filename):
         with open(filename, 'r') as f:
@@ -124,6 +124,8 @@ class Game:
 
             for enemy in self.enemy_sprite_group:
                 enemy.update()
+                
+            self.game_board.logic()
 
     def drawScreen(self):
         self.screen.fill(SKYBLUE)
@@ -301,26 +303,20 @@ class Player(pygame.sprite.Sprite):
 
     def keyResponse(self,event, status):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                self.set_speed_x(-self.horizonal_max_speed)
-            elif event.key == pygame.K_d:
-                self.set_speed_x(self.horizonal_max_speed)
-            elif event.key == pygame.K_w:
+            if event.key == pygame.K_w:
                 self.jump()
             elif event.key == pygame.K_SPACE:
                 self.start_shooting()
-        
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_a or event.key == pygame.K_d:
-                key_p = pygame.key.get_pressed()
-                if key_p[pygame.K_a]:
-                    self.set_speed_x(-self.horizonal_max_speed)
-                elif key_p[pygame.K_d]:
-                    self.set_speed_x(self.horizonal_max_speed)
-                else:
-                    self.set_speed_x(0)
-            elif event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE:
                 self.stop_shooting()
+        key_p = pygame.key.get_pressed()
+        if key_p[pygame.K_a]:
+            self.set_speed_x(-self.horizonal_max_speed)
+        elif key_p[pygame.K_d]:
+            self.set_speed_x(self.horizonal_max_speed)
+        else:
+            self.set_speed_x(0)
         return status
 
 # 16 x 10 block per map
@@ -465,6 +461,8 @@ class TrapGroup():
         self.parseFile(filename)
 
     def parseFile(self,filename):
+        # Maybe not use standard csv file but determine how to read the content by the first column
+        
         with open(filename, 'r') as f:
             reader =  csv.reader(f)
             next(reader)
@@ -508,6 +506,13 @@ class TrapGroup():
         for trap in self.all_trap_group:
             trap.player_interaction(player_rect = player_rect)
 
+class GameBoard():
+    
+    def __init__(self):
+        self.time = 0
+    
+    def logic(self):
+        self.time += 1
 
-
-
+    def draw(self, screen, cam_pos):
+        pass
